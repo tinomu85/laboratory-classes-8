@@ -13,7 +13,7 @@ main {
 }
 
 .heading {
-  color: white;
+  color: rgb(0, 0, 0);
   margin: 0;
   font-size: 2.2rem;
 }
@@ -77,8 +77,8 @@ main {
   font-size: 0.7rem;
   padding: 0.2rem 0.4rem;
   border-radius: 50%;
-  border: 1px solid red;
-  display: none;
+  border: 0, 1px solid red;
+  display: block;
   min-width: 1rem;
   text-align: center;
 }
@@ -172,13 +172,99 @@ main {
   color: #2c3e50;
 }
 
-.card_description {
+.card__description {
   color: #666;
   margin-bottom: 1rem;
 }
 
-.card_price {
+.card__price {
   font-size: 1.2rem;
   font-weight: 700;
   color: #4caf50;
+}
+.card__link {
+  max-height: 45px;
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-decoration: none;
+  margin-right: 1rem;
+}
+.card__link:hover {
+  background-color: #388e3c;
+  transform: translateY(-2px);
+}
+.card__link:active {
+  background-color: #2e7d32;
+  transform: translateY(0);
+}
+.card__button {
+  padding: 0.75rem 1.5rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.card__button:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+.card__button:active {
+  background-color: #b21f2d;
+  transform: translateY(0);
+}
+.product__title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+.product__description {
+  color: #666;
+  margin-bottom: 1rem;
+}
+.product__price {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4caf50;
+}
+.product__button {
+  padding: 0.75rem 1.5rem;
+  color: white;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+.product__button--delete {
+  background-color: #dc3545;
+}
+.product__button--delete:hover {
+  background-color: #f80019;
+  transform: translateY(-2px);
+}
+.product__button--delete:active {
+  background-color: #ff0019;
+  transform: translateY(0);
+}
+.product__button--add {
+  background-color: #4caf50;
+}
+.product__button--add:hover {
+  background-color: #388e3c;
+  transform: translateY(-2px);
+}
+.product__button--add:active {
+  background-color: #2e7d32;
+  transform: translateY(0);
 }

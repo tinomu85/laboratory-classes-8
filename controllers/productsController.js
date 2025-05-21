@@ -1,12 +1,10 @@
 const Product = require("../models/Product");
-
 const { MENU_LINKS } = require("../constants/navigation");
 const { STATUS_CODE } = require("../constants/statusCode");
-
 const cartController = require("./cartController");
 
 exports.getProductsView = async (request, response) => {
-  const cartCount = cartController.getProductsCount();
+  const cartCount = await cartController.getProductsCount();
   const products = await Product.getAll();
 
   response.render("products.ejs", {
@@ -20,7 +18,7 @@ exports.getProductsView = async (request, response) => {
 };
 
 exports.getAddProductView = async (request, response) => {
-  const cartCount = cartController.getProductsCount();
+  const cartCount = await cartController.getProductsCount();
 
   response.render("add-product.ejs", {
     headTitle: "Shop - Add product",
@@ -32,7 +30,7 @@ exports.getAddProductView = async (request, response) => {
 };
 
 exports.getNewProductView = async (request, response) => {
-  const cartCount = cartController.getProductsCount();
+  const cartCount = await cartController.getProductsCount();
   const newestProduct = await Product.getLast();
 
   response.render("new-product.ejs", {
@@ -46,9 +44,8 @@ exports.getNewProductView = async (request, response) => {
 };
 
 exports.getProductView = async (request, response) => {
-  const cartCount = cartController.getProductsCount();
+  const cartCount = await cartController.getProductsCount();
   const name = request.params.name;
-
   const product = await Product.findByName(name);
 
   response.render("product.ejs", {
@@ -66,4 +63,9 @@ exports.deleteProduct = async (request, response) => {
   await Product.deleteByName(name);
 
   response.status(STATUS_CODE.OK).json({ success: true });
+};
+
+exports.addProduct = async (request, response) => {
+  await Product.add(request.body);
+  response.status(STATUS_CODE.FOUND).redirect("/products/new");
 };

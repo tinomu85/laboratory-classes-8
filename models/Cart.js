@@ -4,64 +4,60 @@ const { getDatabase } = require("../database");
 const COLLECTION_NAME = "carts";
 
 class Cart {
-  constructor() {}
-
   static async getCart() {
     const db = getDatabase();
 
     try {
       const cart = await db.collection(COLLECTION_NAME).findOne({});
-
       if (!cart) {
         await db.collection(COLLECTION_NAME).insertOne({ items: [] });
         return { items: [] };
       }
-
       return cart;
     } catch (error) {
-      console.error("Error occurred while searching cart");
-
+      console.error("Error in getCart():", error.message);
       return { items: [] };
     }
   }
 
-  static async add(productName) {
+  static async add(product) {
     const db = getDatabase();
 
     try {
-      const product = await Product.findByName(productName);
-
-      if (!product) {
-        throw Error(`Product '${productName}' not found`);
+      if (!product || !product.name) {
+        throw new Error("Invalid product object");
       }
 
       const cart = await this.getCart();
-      const searchedProduct = cart.items.find(
-        (item) => item.product.name === productName
+
+      if (!Array.isArray(cart.items)) {
+        cart.items = [];
+      }
+
+      const existingItem = cart.items.find(
+        (item) => item.product.name === product.name
       );
 
-      if (searchedProduct) {
-        searchedProduct.quantity += 1;
+      if (existingItem) {
+        existingItem.quantity += 1;
       } else {
         cart.items.push({ product, quantity: 1 });
       }
 
       await db
         .collection(COLLECTION_NAME)
-        .updateOne({}, { $set: { items: cart.items } });
+        .updateOne({}, { $set: { items: cart.items } }, { upsert: true });
     } catch (error) {
-      console.error("Error occurred while adding product to cart");
+      console.error("Error in add():", error.message);
     }
   }
 
   static async getItems() {
     try {
       const cart = await this.getCart();
-
-      return cart.items;
+      return cart.items || [];
     } catch (error) {
-      console.error("Error occurred while searching for products in cart");
-
+      console.error("Error in getItems():", error.message);
       return [];
     }
   }
@@ -69,35 +65,25 @@ class Cart {
   static async getProductsQuantity() {
     try {
       const cart = await this.getCart();
-      const productsQuantity = cart.items.reduce(
+      return (cart.items || []).reduce(
         (total, item) => total + item.quantity,
         0
       );
-
-      return productsQuantity;
     } catch (error) {
-      console.error("Error occurred while getting quantity of items in cart");
-
+      console.error("Error in getProductsQuantity():", error.message);
       return 0;
     }
   }
 
   static async getTotalPrice() {
-    const db = getDatabase();
-
     try {
       const cart = await this.getCart();
-      const totalPrice = cart.items.reduce(
+      return (cart.items || []).reduce(
         (total, item) => total + item.product.price * item.quantity,
         0
       );
-
-      return totalPrice;
     } catch (error) {
-      console.error(
-        "Error occurred while calcualting total price of items in cart"
-      );
-
+      console.error("Error in getTotalPrice():", error.message);
       return 0;
     }
   }
@@ -108,9 +94,26 @@ class Cart {
     try {
       await db
         .collection(COLLECTION_NAME)
-        .updateOne({}, { $set: { items: [] } });
+        .updateOne({}, { $set: { items: [] } }, { upsert: true });
     } catch (error) {
-      console.error("Error occurred while clearing cart");
+      console.error("Error in clearCart():", error.message);
+    }
+  }
+
+  static async deleteProductByName(productName) {
+    const db = getDatabase();
+
+    try {
+      const cart = await this.getCart();
+      const filteredItems = (cart.items || []).filter(
+        (item) => item.product.name !== productName
+      );
+
+      await db
+        .collection(COLLECTION_NAME)
+        .updateOne({}, { $set: { items: filteredItems } }, { upsert: true });
+    } catch (error) {
+      console.error("Error in deleteProductByName():", error.message);
     }
   }
 }

@@ -1,4 +1,5 @@
 const { getDatabase } = require("../database");
+const Cart = require("./Cart");
 
 const COLLECTION_NAME = "products";
 
@@ -54,6 +55,7 @@ class Product {
 
     try {
       await db.collection(COLLECTION_NAME).deleteOne({ name });
+      await Cart.deleteProductByName(name);
     } catch (error) {
       console.error("Error occurred while deleting product");
     }
